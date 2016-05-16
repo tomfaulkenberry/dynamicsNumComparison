@@ -1,10 +1,15 @@
+############################################################################################################
+## Analysis for Experiment 1 of "Testing a direct mapping versus..."
+## Note: before plotting any graphs, be sure to execute the "helper functions" at the bottom of this script
+############################################################################################################
+
+
 library("ggplot2")
 rawData<-read.table("completeExp1.csv",sep=",",header=TRUE)
 
 # clean up data
 
-dataStep2<-subset(rawData,subset=block==1)
-dataStep3<-subset(dataStep2,subset=error!=1) # remove errors
+dataStep3<-subset(rawData,subset=error!=1) # remove errors
 
 meanRT<-mean(dataStep3$RT)
 sdRT<-sd(dataStep3$RT)
@@ -13,29 +18,6 @@ attach(data)
 
 # first analyze time measures
 # PERFORMANCE MEASURES
-# RT
-agg=aggregate(RT~subject+distance+condition+response,data=data,FUN="mean") # RT performance data aggregated by subject
-RT.aov=aov(RT~as.factor(distance)*as.factor(condition)*as.factor(response)+Error(as.factor(subject)/(as.factor(distance)*as.factor(condition)*as.factor(response))),data=agg)
-summary(RT.aov)
-print(model.tables(RT.aov,"means"),digits=3)
-
-summary=summarySEwithin(agg,measurevar="RT",withinvars=c("condition","distance","response"),idvar="subject")
-summary$condition<-c("congruent","congruent","congruent","congruent","congruent","congruent","congruent","congruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent")
-summary$response<-c("leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward")
-
-ggplot(summary,aes(x=distance,y=RT,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=RT-ci,ymax=RT+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean RT (ms)")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))
-
-# init
-agg=aggregate(init.time~subject+distance+condition+response,data=data,FUN="mean") # RT performance data aggregated by subject
-init.aov=aov(init.time~as.factor(distance)*as.factor(condition)*as.factor(response)+Error(as.factor(subject)/(as.factor(distance)*as.factor(condition)*as.factor(response))),data=agg)
-summary(init.aov)
-print(model.tables(init.aov,"means"),digits=3)
-
-1, summary=summarySEwithin(agg,measurevar="init.time",withinvars=c("condition","distance","response"),idvar="subject")
-summary$condition<-c("congruent","congruent","congruent","congruent","congruent","congruent","congruent","congruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent")
-summary$response<-c("leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward")
-
-ggplot(summary,aes(x=distance,y=init.time,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=init.time-ci,ymax=init.time+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean Inititation Time (ms)")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))+ylim(70,100)
 
 # movement time
 agg=aggregate(RT-init.time~subject+distance+condition+response,data=data,FUN="mean") # RT performance data aggregated by subject
@@ -54,157 +36,98 @@ contrasts(dist)<-contr.poly(4)
 distanceTrendMT<-aov(MT~dist,data=agg)
 summary.lm(distanceTrendMT)
 
+ggplot(summary,aes(x=distance,y=MT,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=MT-ci,ymax=MT+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean MT (ms)")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))+theme_classic(20)+theme(axis.line.x=element_line(color="black",size=0.5,linetype="solid"),axis.line.y=element_line(color="black",size=0.5,linetype="solid"))
 
-ggplot(summary,aes(x=distance,y=MT,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=MT-ci,ymax=MT+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean MT (ms)")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))
+# init
+agg=aggregate(init.time~subject+distance+condition+response,data=data,FUN="mean") # RT performance data aggregated by subject
+init.aov=aov(init.time~as.factor(distance)*as.factor(condition)*as.factor(response)+Error(as.factor(subject)/(as.factor(distance)*as.factor(condition)*as.factor(response))),data=agg)
+summary(init.aov)
+print(model.tables(init.aov,"means"),digits=3)
+
+summary=summarySEwithin(agg,measurevar="init.time",withinvars=c("condition","distance","response"),idvar="subject")
+summary$condition<-c("congruent","congruent","congruent","congruent","congruent","congruent","congruent","congruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent")
+summary$response<-c("leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward")
 
 
-# second, graph leftward and rightward trajectories separately
-# congruent versus incongruent mapping
+################################################################################################################
+## Plot single graph of hand trajectories with error bands (collapsing over numerical distance)
+## SE width at each timestep computed as standard error of mean x-coordinates over a sample of 64 participants
+#########################################################################################################
 
-# plot hand trajectories
+dataLeftCongruent<-subset(data,response==1 & condition==1)
+dataLeftIncongruent<-subset(data,response==1 & condition==2)
+dataRightCongruent<-subset(data,response==2 & condition==1)
+dataRightIncongruent<-subset(data,response==2 & condition==2)
 
-dataLeftCongruent1<-subset(data,response==1 & condition==1 & distance==1)
-dataLeftCongruent2<-subset(data,response==1 & condition==1 & distance==2)
-dataLeftCongruent3<-subset(data,response==1 & condition==1 & distance==3)
-dataLeftCongruent4<-subset(data,response==1 & condition==1 & distance==4)
+# SE measures for each subset
 
-dataLeftIncongruent1<-subset(data,response==1 & condition==2 & distance==1)
-dataLeftIncongruent2<-subset(data,response==1 & condition==2 & distance==2)
-dataLeftIncongruent3<-subset(data,response==1 & condition==2 & distance==3)
-dataLeftIncongruent4<-subset(data,response==1 & condition==2 & distance==4)
+SEmatrixLeftCongruent<-matrix(rep(0,64*101),nrow=64,ncol=101,byrow=TRUE)
+SEmatrixLeftIncongruent<-matrix(rep(0,64*101),nrow=64,ncol=101,byrow=TRUE)
+SEmatrixRightCongruent<-matrix(rep(0,64*101),nrow=64,ncol=101,byrow=TRUE)
+SEmatrixRightIncongruent<-matrix(rep(0,64*101),nrow=64,ncol=101,byrow=TRUE)
 
-dataRightCongruent1<-subset(data,response==2 & condition==1 & distance==1)
-dataRightCongruent2<-subset(data,response==2 & condition==1 & distance==2)
-dataRightCongruent3<-subset(data,response==2 & condition==1 & distance==3)
-dataRightCongruent4<-subset(data,response==2 & condition==1 & distance==4)
-
-dataRightIncongruent1<-subset(data,response==2 & condition==2 & distance==1)
-dataRightIncongruent2<-subset(data,response==2 & condition==2 & distance==2)
-dataRightIncongruent3<-subset(data,response==2 & condition==2 & distance==3)
-dataRightIncongruent4<-subset(data,response==2 & condition==2 & distance==4)
-
-xCoords=rep(0,1616)
-yCoords=rep(0,1616)
-side=rep(0,1616)
-condition=rep(0,1616)
-distance=rep(0,1616)
-
-for (i in 1:101){
-  xCoords[i]=mean(dataLeftCongruent1[,i+20])
-  yCoords[i]=mean(dataLeftCongruent1[,i+121])
-  side[i]="leftward"
-  condition[i]="congruent"
-  distance[i]="1"
+for (i in 1:64){
+  leftCongruent<-subset(dataLeftCongruent,subject==i)
+  leftIncongruent<-subset(dataLeftIncongruent,subject==i)
+  rightCongruent<-subset(dataRightCongruent,subject==i)
+  rightIncongruent<-subset(dataRightIncongruent,subject==i)
   
-  xCoords[i+101]=mean(dataLeftCongruent2[,i+20])
-  yCoords[i+101]=mean(dataLeftCongruent2[,i+121])
-  side[i+101]="leftward"
-  condition[i+101]="congruent"
-  distance[i+101]="2"
-  
-  xCoords[i+202]=mean(dataLeftCongruent3[,i+20])
-  yCoords[i+202]=mean(dataLeftCongruent3[,i+121])
-  side[i+202]="leftward"
-  condition[i+202]="congruent"
-  distance[i+202]="3"
-  
-  xCoords[i+303]=mean(dataLeftCongruent4[,i+20])
-  yCoords[i+303]=mean(dataLeftCongruent4[,i+121])
-  side[i+303]="leftward"
-  condition[i+303]="congruent"
-  distance[i+303]="4"
-  
-  xCoords[i+404]=mean(dataLeftIncongruent1[,i+20])
-  yCoords[i+404]=mean(dataLeftIncongruent1[,i+121])
-  side[i+404]="leftward"
-  condition[i+404]="incongruent"
-  distance[i+404]="1"
-  
-  xCoords[i+505]=mean(dataLeftIncongruent2[,i+20])
-  yCoords[i+505]=mean(dataLeftIncongruent2[,i+121])
-  side[i+505]="leftward"
-  condition[i+505]="incongruent"
-  distance[i+505]="2"
-  
-  xCoords[i+606]=mean(dataLeftIncongruent3[,i+20])
-  yCoords[i+606]=mean(dataLeftIncongruent3[,i+121])
-  side[i+606]="leftward"
-  condition[i+606]="incongruent"
-  distance[i+606]="3"
-  
-  xCoords[i+707]=mean(dataLeftIncongruent4[,i+20])
-  yCoords[i+707]=mean(dataLeftIncongruent4[,i+121])
-  side[i+707]="leftward"
-  condition[i+707]="incongruent"
-  distance[i+707]="4"
-  
-  xCoords[i+808]=-mean(dataRightCongruent1[,i+20])
-  yCoords[i+808]=mean(dataRightCongruent1[,i+121])
-  side[i+808]="rightward"
-  condition[i+808]="congruent"
-  distance[i+808]="1"
-  
-  xCoords[i+909]=-mean(dataRightCongruent2[,i+20])
-  yCoords[i+909]=mean(dataRightCongruent2[,i+121])
-  side[i+909]="rightward"
-  condition[i+909]="congruent"
-  distance[i+909]="2"
-  
-  xCoords[i+1010]=-mean(dataRightCongruent3[,i+20])
-  yCoords[i+1010]=mean(dataRightCongruent3[,i+121])
-  side[i+1010]="rightward"
-  condition[i+1010]="congruent"
-  distance[i+1010]="3"
-  
-  xCoords[i+1111]=-mean(dataRightCongruent4[,i+20])
-  yCoords[i+1111]=mean(dataRightCongruent4[,i+121])
-  side[i+1111]="rightward"
-  condition[i+1111]="congruent"
-  distance[i+1111]="4"
-  
-  xCoords[i+1212]=-mean(dataRightIncongruent1[,i+20])
-  yCoords[i+1212]=mean(dataRightIncongruent1[,i+121])
-  side[i+1212]="rightward"
-  condition[i+1212]="incongruent"
-  distance[i+1212]="1"
-  
-  xCoords[i+1313]=-mean(dataRightIncongruent2[,i+20])
-  yCoords[i+1313]=mean(dataRightIncongruent2[,i+121])
-  side[i+1313]="rightward"
-  condition[i+1313]="incongruent"
-  distance[i+1313]="2"
-  
-  xCoords[i+1414]=-mean(dataRightIncongruent3[,i+20])
-  yCoords[i+1414]=mean(dataRightIncongruent3[,i+121])
-  side[i+1414]="rightward"
-  condition[i+1414]="incongruent"
-  distance[i+1414]="3"
-  
-  xCoords[i+1515]=-mean(dataRightIncongruent4[,i+20])
-  yCoords[i+1515]=mean(dataRightIncongruent4[,i+121])
-  side[i+1515]="rightward"
-  condition[i+1515]="incongruent"
-  distance[i+1515]="4"
+  for (j in 1:101){
+    SEmatrixLeftCongruent[i,j]<-mean(leftCongruent[,j+20])#/sqrt(length(leftCongruent[,j+20]))
+    SEmatrixLeftIncongruent[i,j]<-mean(leftIncongruent[,j+20])#/sqrt(length(leftIncongruent[,j+20]))
+    SEmatrixRightCongruent[i,j]<-mean(rightCongruent[,j+20])#/sqrt(length(rightCongruent[,j+20]))
+    SEmatrixRightIncongruent[i,j]<-mean(rightIncongruent[,j+20])#/sqrt(length(rightIncongruent[,j+20]))
+  }
 }
 
+
+
+xCoordsLeft=rep(0,202)
+xCoordsRight=rep(0,202)
+yCoordsLeft=rep(0,202)
+yCoordsRight=rep(0,202)
+SEleft=rep(0,202)
+SEright=rep(0,202)
+condition=rep(0,202)
+
+for (i in 1:101){
+  xCoordsLeft[i]=mean(dataLeftCongruent[,i+20])
+  xCoordsRight[i]=-mean(dataRightCongruent[,i+20])
+  yCoordsLeft[i]=mean(dataLeftCongruent[,i+121])
+  yCoordsRight[i]=mean(dataRightCongruent[,i+121])
+  SEleft[i]=sd(SEmatrixLeftCongruent[,i])/sqrt(64)
+  SEright[i]=sd(SEmatrixRightCongruent[,i])/sqrt(64)
+  condition[i]="congruent"
+  
+  xCoordsLeft[i+101]=mean(dataLeftIncongruent[,i+20])
+  xCoordsRight[i+101]=-mean(dataRightIncongruent[,i+20])
+  yCoordsLeft[i+101]=mean(dataLeftIncongruent[,i+121])
+  yCoordsRight[i+101]=mean(dataRightIncongruent[,i+121])
+  SEleft[i+101]=sd(SEmatrixLeftIncongruent[,i])/sqrt(64)
+  SEright[i+101]=sd(SEmatrixRightIncongruent[,i])/sqrt(64)
+  condition[i+101]="incongruent"
+}
+
+
 library("ggplot2")
-trajectoryData=data.frame(xCoords,yCoords,side,condition,distance)
-plot=ggplot(trajectoryData,aes(x=xCoords,y=yCoords,group=condition))+xlim(-1,1)+ylim(0,1.5)
-paths=geom_path(aes(linetype=condition),size=1.3)
-labels=labs(x="x-coordinates",y="y-coordinates")
-faceting=facet_grid(distance~side)
-stripFormat=theme(strip.text=element_text(face="bold",size=rel(1.5)))
+trajectoryData=data.frame(yCoordsLeft,yCoordsRight,xCoordsLeft,xCoordsRight,SEleft,SEright,condition)
+plot=ggplot(trajectoryData,aes())
+pathLeft=geom_path(aes(x=yCoordsLeft,y=xCoordsLeft,linetype=condition),size=0.6)
+ribbonLeft=geom_ribbon(aes(x=yCoordsLeft,y=xCoordsLeft,ymin=xCoordsLeft-SEleft,ymax=xCoordsLeft+SEleft,linetype=condition),alpha=0.2)
+pathRight=geom_path(aes(x=yCoordsRight,y=xCoordsRight,linetype=condition),size=0.6)
+ribbonRight=geom_ribbon(aes(x=yCoordsRight,y=xCoordsRight,ymin=xCoordsRight-SEright,ymax=xCoordsRight+SEright,linetype=condition),alpha=0.2)
+axisLabels=labs(y="x-coordinates",x="y-coordinates")
+#theme(strip.text=element_text(face="bold",size=rel(1.5)))
 legendFormat=theme(legend.title=element_text(face="bold",size=rel(1.5)),legend.text=element_text(size=rel(1.5)))
-axesFormat=theme(axis.title=element_text(size=rel(1.4)))
+axisFormat=theme(axis.title=element_text(size=rel(1.4)))
+legend=labs(linetype="Condition")+theme(legend.position=c(0.5,1))+theme(legend.background=element_rect(fill="white",colour="black"))
+classic=theme_classic(20)+theme(axis.line.x=element_line(color="black",size=0.5,linetype="solid"),axis.line.y=element_line(color="black",size=0.5,linetype="solid"))
+
+plot+pathLeft+ribbonLeft+pathRight+ribbonRight+axisLabels+axisFormat+legend+legendFormat+classic+coord_flip()+xlim(0,1.5)+ylim(-1,1)
 
 
-basePlot=plot+paths+labels+faceting+stripFormat+legendFormat+axesFormat
-basePlot+labs(colour="Condition")+theme(legend.position=c(0.5,0.5))+theme(legend.background=element_rect(fill="white",colour="black"))
 
-# notes: export as 700 x 800
-
-
-# aggregate AUC and MD measures by distance, side, and condition
+# aggregate AUC  by distance, side, and condition
 agg=aggregate(AUC~subject+distance+condition+response,data=data,FUN="mean") # AUC performance data aggregated by subject
 AUC.aov=aov(AUC~as.factor(distance)*as.factor(condition)*as.factor(response)+Error(as.factor(subject)/(as.factor(distance)*as.factor(condition)*as.factor(response))),data=agg)
 summary(AUC.aov)
@@ -216,13 +139,12 @@ contrasts(dist)<-contr.poly(4)
 distanceTrendAUC<-aov(AUC~dist,data=agg)
 summary.lm(distanceTrendAUC)
 
-
-
 summary=summarySEwithin(agg,measurevar="AUC",withinvars=c("condition","distance","response"),idvar="subject")
 summary$condition<-c("congruent","congruent","congruent","congruent","congruent","congruent","congruent","congruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent")
 summary$response<-c("leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward")
 
-ggplot(summary,aes(x=distance,y=AUC,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=AUC-ci,ymax=AUC+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean Area Under Curve")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))
+ggplot(summary,aes(x=distance,y=AUC,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=AUC-ci,ymax=AUC+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean Area Under Curve")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))+theme_classic(20)+theme(axis.line.x=element_line(color="black",size=0.5,linetype="solid"),axis.line.y=element_line(color="black",size=0.5,linetype="solid"))
+
 
 # subset on only INCONGRUENT trials
 
@@ -235,20 +157,6 @@ dist<-as.factor(aggSubset$distance)
 contrasts(dist)<-contr.poly(4)
 distanceTrendAUC<-aov(AUC~dist,data=aggSubset)
 summary.lm(distanceTrendAUC)
-
-# MD
-agg=aggregate(MD~subject+distance+condition+response,data=data,FUN="mean") # AUC performance data aggregated by subject
-MD.aov=aov(MD~as.factor(distance)*as.factor(condition)*as.factor(response)+Error(as.factor(subject)/(as.factor(distance)*as.factor(condition)*as.factor(response))),data=agg)
-summary(MD.aov)
-print(model.tables(MD.aov,"means"),digits=3)
-
-summary=summarySEwithin(agg,measurevar="MD",withinvars=c("condition","distance","response"),idvar="subject")
-summary$condition<-c("congruent","congruent","congruent","congruent","congruent","congruent","congruent","congruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent")
-summary$response<-c("leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward","leftward","rightward")
-
-ggplot(summary,aes(x=distance,y=MD,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=MD-ci,ymax=MD+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean Maximum Deviation")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))
-
-
 
 
 # compute Asymmetry scores
@@ -352,10 +260,7 @@ for (i in 1:64){
   
 }
 
-x<-data.frame(subject,distance,decision,asymmetry) # for ANOVA in R
-#x<-data.frame(subjAsymmetryScoreSmallerSmall,subjAsymmetryScoreSmallerLarge,subjAsymmetryScoreLargerSmall,subjAsymmetryScoreLargerLarge) # for ANOVA in JASP
-#write.csv(x,"~/Dropbox/experiments/mouseTrackComparisonData/Rscripts/asymmetryScores.csv")
-
+x<-data.frame(subject,distance,decision,asymmetry) 
 
 asym.aov<-aov(asymmetry~as.factor(distance)*as.factor(decision)+Error(as.factor(subject)/(as.factor(distance)*as.factor(decision))),data=x)
 summary(asym.aov)
@@ -365,8 +270,7 @@ summary=summarySEwithin(x,measurevar="asymmetry",withinvars=c("distance","decisi
 
 summary$distance<-factor(summary$distance,levels=c("small","large"))
 
-ggplot(summary,aes(x=distance,y=asymmetry,shape=decision))+geom_line(aes(group=decision,linetype=decision))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=asymmetry-ci,ymax=asymmetry+ci))+labs(x="Numerical distance",y="Asymmetry score")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))
-
+ggplot(summary,aes(x=distance,y=asymmetry,shape=decision))+geom_line(aes(group=decision,linetype=decision))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=asymmetry-ci,ymax=asymmetry+ci))+labs(x="Numerical distance",y="Asymmetry score")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme_classic(20)+theme(axis.line.x=element_line(color="black",size=0.5,linetype="solid"),axis.line.y=element_line(color="black",size=0.5,linetype="solid"))
 
 
 
@@ -397,6 +301,26 @@ n=length(z.AUC[data$condition==2])
 
 BC=(s^2+1)/(k+(3*(n-1)^2)/((n-2)*(n-3)))
 BC
+
+######################################################################
+## plot histogram of AUC values
+
+AUCplotData<-data.frame(z.AUC,data$condition)
+
+basePlot<-ggplot(AUCplotData,aes(x=z.AUC,fill=as.factor(data.condition)))+geom_histogram(color="black",binwidth=0.3,alpha=0.6,position="identity")+xlim(-2,5)
+
+colors<-scale_fill_manual(values=c("white","gray"),name="condition",breaks=c(1,2),labels=c("congruent","incongruent"))
+labels<-labs(x="AUC z-scores",y="frequency")
+publicationScheme<-theme_classic(20)+theme(axis.line.x=element_line(color="black",size=0.5,linetype="solid"),axis.line.y=element_line(color="black",size=0.5,linetype="solid"))
+
+
+basePlot+colors+labels+publicationScheme+theme(legend.position=c(0.75,0.75))
+
+### export 700 x 500
+
+
+
+
 
 # helper function for error bars above
 

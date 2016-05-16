@@ -1,3 +1,10 @@
+############################################################################################################
+## Analysis for Experiment 2 of "Testing a direct mapping versus..."
+## Note: before plotting any graphs, be sure to execute the "helper functions" at the bottom of this script
+############################################################################################################
+
+
+
 library("ggplot2")
 rawData<-read.table("completeExp2.csv",sep=",",header=TRUE)
 
@@ -13,29 +20,6 @@ attach(data)
 
 # first analyze time measures
 # PERFORMANCE MEASURES
-# RT
-agg=aggregate(RT~subject+distance+condition+response,data=data,FUN="mean") # RT performance data aggregated by subject
-RT.aov=aov(RT~as.factor(distance)*as.factor(condition)*as.factor(response)+Error(as.factor(subject)/(as.factor(distance)*as.factor(condition)*as.factor(response))),data=agg)
-summary(RT.aov)
-print(model.tables(RT.aov,"means"),digits=3)
-
-summary=summarySEwithin(agg,measurevar="RT",withinvars=c("condition","distance","response"),idvar="subject")
-summary$condition<-c("congruent","congruent","congruent","congruent","congruent","congruent","congruent","congruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent")
-summary$response<-c("downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward")
-
-ggplot(summary,aes(x=distance,y=RT,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=RT-ci,ymax=RT+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean RT (ms)")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))
-
-# init
-agg=aggregate(init.time~subject+distance+condition+response,data=data,FUN="mean") # RT performance data aggregated by subject
-init.aov=aov(init.time~as.factor(distance)*as.factor(condition)*as.factor(response)+Error(as.factor(subject)/(as.factor(distance)*as.factor(condition)*as.factor(response))),data=agg)
-summary(init.aov)
-print(model.tables(init.aov,"means"),digits=3)
-
-summary=summarySEwithin(agg,measurevar="init.time",withinvars=c("condition","distance","response"),idvar="subject")
-summary$condition<-c("congruent","congruent","congruent","congruent","congruent","congruent","congruent","congruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent")
-summary$response<-c("downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward")
-
-ggplot(summary,aes(x=distance,y=init.time,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=init.time-ci,ymax=init.time+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean Inititation Time (ms)")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))+ylim(70,100)
 
 # movement time
 agg=aggregate(RT-init.time~subject+distance+condition+response,data=data,FUN="mean") # RT performance data aggregated by subject
@@ -54,7 +38,102 @@ summary=summarySEwithin(agg,measurevar="MT",withinvars=c("condition","distance",
 summary$condition<-c("congruent","congruent","congruent","congruent","congruent","congruent","congruent","congruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent")
 summary$response<-c("downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward")
 
-ggplot(summary,aes(x=distance,y=MT,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=MT-ci,ymax=MT+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean MT (ms)")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))
+ggplot(summary,aes(x=distance,y=MT,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=MT-ci,ymax=MT+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean MT (ms)")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))+theme_classic(20)+theme(axis.line.x=element_line(color="black",size=0.5,linetype="solid"),axis.line.y=element_line(color="black",size=0.5,linetype="solid"))
+
+
+# init
+agg=aggregate(init.time~subject+distance+condition+response,data=data,FUN="mean") # RT performance data aggregated by subject
+init.aov=aov(init.time~as.factor(distance)*as.factor(condition)*as.factor(response)+Error(as.factor(subject)/(as.factor(distance)*as.factor(condition)*as.factor(response))),data=agg)
+summary(init.aov)
+print(model.tables(init.aov,"means"),digits=3)
+
+summary=summarySEwithin(agg,measurevar="init.time",withinvars=c("condition","distance","response"),idvar="subject")
+summary$condition<-c("congruent","congruent","congruent","congruent","congruent","congruent","congruent","congruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent")
+summary$response<-c("downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward")
+
+
+
+################################################################################################################
+## Plot single graph of hand trajectories with error bands (collapsing over numerical distance)
+## SE width at each timestep computed as standard error of mean y-coordinates over a sample of 32 participants
+#########################################################################################################
+
+dataDownCongruent<-subset(data,response==1 & condition==1)
+dataDownIncongruent<-subset(data,response==1 & condition==2)
+dataUpCongruent<-subset(data,response==2 & condition==1)
+dataUpIncongruent<-subset(data,response==2 & condition==2)
+
+# SE measures for each subset
+
+SEmatrixDownCongruent<-matrix(rep(0,32*101),nrow=32,ncol=101,byrow=TRUE)
+SEmatrixDownIncongruent<-matrix(rep(0,32*101),nrow=32,ncol=101,byrow=TRUE)
+SEmatrixUpCongruent<-matrix(rep(0,32*101),nrow=32,ncol=101,byrow=TRUE)
+SEmatrixUpIncongruent<-matrix(rep(0,32*101),nrow=32,ncol=101,byrow=TRUE)
+
+for (i in 1:32){
+  downCongruent<-subset(dataDownCongruent,subject==i)
+  downIncongruent<-subset(dataDownIncongruent,subject==i)
+  upCongruent<-subset(dataUpCongruent,subject==i)
+  upIncongruent<-subset(dataUpIncongruent,subject==i)
+  
+  for (j in 1:101){
+    SEmatrixDownCongruent[i,j]<-mean(downCongruent[,j+20])#/sqrt(length(leftCongruent[,j+20]))
+    SEmatrixDownIncongruent[i,j]<-mean(downIncongruent[,j+20])#/sqrt(length(leftIncongruent[,j+20]))
+    SEmatrixUpCongruent[i,j]<-mean(upCongruent[,j+20])#/sqrt(length(rightCongruent[,j+20]))
+    SEmatrixUpIncongruent[i,j]<-mean(upIncongruent[,j+20])#/sqrt(length(rightIncongruent[,j+20]))
+  }
+}
+
+
+
+
+
+xCoordsDown=rep(0,202)
+xCoordsUp=rep(0,202)
+yCoordsDown=rep(0,202)
+yCoordsUp=rep(0,202)
+SEdown=rep(0,202)
+SEup=rep(0,202)
+condition=rep(0,202)
+
+for (i in 1:101){
+  xCoordsDown[i]=mean(dataDownCongruent[,i+20])
+  xCoordsUp[i]=mean(dataUpCongruent[,i+20])
+  yCoordsDown[i]=mean(dataDownCongruent[,i+121])
+  yCoordsUp[i]=mean(dataUpCongruent[,i+121])
+  SEdown[i]=sd(SEmatrixDownCongruent[,i])/sqrt(32)
+  SEup[i]=sd(SEmatrixUpCongruent[,i])/sqrt(32)
+  condition[i]="congruent"
+  
+  xCoordsDown[i+101]=mean(dataDownIncongruent[,i+20])
+  xCoordsUp[i+101]=mean(dataUpIncongruent[,i+20])
+  yCoordsDown[i+101]=mean(dataDownIncongruent[,i+121])
+  yCoordsUp[i+101]=mean(dataUpIncongruent[,i+121])
+  SEdown[i+101]=sd(SEmatrixDownIncongruent[,i])/sqrt(32)
+  SEup[i+101]=sd(SEmatrixUpIncongruent[,i])/sqrt(32)
+  condition[i+101]="incongruent"
+}
+
+
+library("ggplot2")
+trajectoryData=data.frame(yCoordsDown,yCoordsUp,xCoordsDown,xCoordsUp,SEdown,SEup,condition)
+plot=ggplot(trajectoryData,aes())
+pathDown=geom_path(aes(x=xCoordsDown,y=yCoordsDown,linetype=condition),size=0.6)
+ribbonDown=geom_ribbon(aes(x=xCoordsDown,y=yCoordsDown,ymin=yCoordsDown-SEdown,ymax=yCoordsDown+SEdown,linetype=condition),alpha=0.3)
+pathUp=geom_path(aes(x=xCoordsUp,y=yCoordsUp,linetype=condition),size=0.6)
+ribbonUp=geom_ribbon(aes(x=xCoordsUp,y=yCoordsUp,ymin=yCoordsUp-SEup,ymax=yCoordsUp+SEup,linetype=condition),alpha=0.3)
+axisLabels=labs(x="x-coordinates",y="y-coordinates")
+#theme(strip.text=element_text(face="bold",size=rel(1.5)))
+legendFormat=theme(legend.title=element_text(face="bold",size=rel(1.5)),legend.text=element_text(size=rel(1.5)))
+axisFormat=theme(axis.title=element_text(size=rel(1.4)))
+legend=labs(linetype="Condition")+theme(legend.position=c(0.5,0.5))+theme(legend.background=element_rect(fill="white",colour="black"))
+classic=theme_classic(20)+theme(axis.line.x=element_line(color="black",size=0.5,linetype="solid"),axis.line.y=element_line(color="black",size=0.5,linetype="solid"))
+
+plot+pathDown+ribbonDown+pathUp+ribbonUp+axisLabels+axisFormat+legend+legendFormat+classic+xlim(-1,1)+ylim(0,1.5)
+
+
+## note: export as 800 x 500
+
 
 
 # second, graph downward and upward trajectories separately
@@ -208,7 +287,7 @@ basePlot+labs(colour="Condition")+theme(legend.position=c(0.5,0.5))+theme(legend
 # notes: export as 700 x 800
 
 
-# aggregate AUC and MD measures by distance, side, and condition
+# aggregate AUC by distance, side, and condition
 agg=aggregate(AUC~subject+distance+condition+response,data=data,FUN="mean") # AUC performance data aggregated by subject
 AUC.aov=aov(AUC~as.factor(distance)*as.factor(condition)*as.factor(response)+Error(as.factor(subject)/(as.factor(distance)*as.factor(condition)*as.factor(response))),data=agg)
 summary(AUC.aov)
@@ -224,22 +303,7 @@ summary=summarySEwithin(agg,measurevar="AUC",withinvars=c("condition","distance"
 summary$condition<-c("congruent","congruent","congruent","congruent","congruent","congruent","congruent","congruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent")
 summary$response<-c("downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward")
 
-ggplot(summary,aes(x=distance,y=AUC,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=AUC-ci,ymax=AUC+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean Area Under Curve")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))
-
-# MD
-agg=aggregate(MD~subject+distance+condition+response,data=data,FUN="mean") # AUC performance data aggregated by subject
-MD.aov=aov(MD~as.factor(distance)*as.factor(condition)*as.factor(response)+Error(as.factor(subject)/(as.factor(distance)*as.factor(condition)*as.factor(response))),data=agg)
-summary(MD.aov)
-print(model.tables(MD.aov,"means"),digits=3)
-
-summary=summarySEwithin(agg,measurevar="MD",withinvars=c("condition","distance","response"),idvar="subject")
-summary$condition<-c("congruent","congruent","congruent","congruent","congruent","congruent","congruent","congruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent","incongruent")
-summary$response<-c("downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward","downward","upward")
-
-ggplot(summary,aes(x=distance,y=MD,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=MD-ci,ymax=MD+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean Maximum Deviation")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))
-
-
-
+ggplot(summary,aes(x=distance,y=AUC,shape=condition))+geom_line(aes(group=condition,linetype=condition))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=AUC-ci,ymax=AUC+ci))+facet_grid(~response)+labs(x="Numerical distance",y="Mean Area Under Curve")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme(strip.text=element_text(face="bold",size=rel(1.3)))+theme_classic(20)+theme(axis.line.x=element_line(color="black",size=0.5,linetype="solid"),axis.line.y=element_line(color="black",size=0.5,linetype="solid"))
 
 
 # compute Asymmetry scores
@@ -358,7 +422,8 @@ summary=summarySEwithin(x,measurevar="asymmetry",withinvars=c("distance","decisi
 
 summary$distance<-factor(summary$distance,levels=c("small","large"))
 
-ggplot(summary,aes(x=distance,y=asymmetry,shape=decision))+geom_line(aes(group=decision,linetype=decision))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=asymmetry-ci,ymax=asymmetry+ci))+labs(x="Numerical distance",y="Asymmetry score")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))
+ggplot(summary,aes(x=distance,y=asymmetry,shape=decision))+geom_line(aes(group=decision,linetype=decision))+geom_point(size=4)+geom_errorbar(width=0.1,aes(ymin=asymmetry-ci,ymax=asymmetry+ci))+labs(x="Numerical distance",y="Asymmetry score")+theme(legend.title=element_text(face="bold",size=rel(1.3)),legend.text=element_text(size=rel(1.3)))+theme(axis.title=element_text(face="bold",size=rel(1.3)))+theme(axis.text.x=element_text(size=rel(1.3)))+theme(axis.text.y=element_text(size=rel(1.3)))+theme_classic(20)+theme(axis.line.x=element_line(color="black",size=0.5,linetype="solid"),axis.line.y=element_line(color="black",size=0.5,linetype="solid"))
+
 
 
 
@@ -391,6 +456,21 @@ n=length(z.AUC[data$condition==2])
 BC=(s^2+1)/(k+(3*(n-1)^2)/((n-2)*(n-3)))
 BC
 
+######################################################################
+## plot histogram of AUC values
+
+AUCplotData<-data.frame(z.AUC,data$condition)
+
+basePlot<-ggplot(AUCplotData,aes(x=z.AUC,fill=as.factor(data.condition)))+geom_histogram(color="black",binwidth=0.3,alpha=0.6,position="identity")+xlim(-4,5)
+
+colors<-scale_fill_manual(values=c("white","gray"),name="condition",breaks=c(1,2),labels=c("congruent","incongruent"))
+labels<-labs(x="AUC z-scores",y="frequency")
+publicationScheme<-theme_classic(20)+theme(axis.line.x=element_line(color="black",size=0.5,linetype="solid"),axis.line.y=element_line(color="black",size=0.5,linetype="solid"))
+
+
+basePlot+colors+labels+publicationScheme+theme(legend.position=c(0.75,0.75))
+
+### export 800x600
 
 
 
